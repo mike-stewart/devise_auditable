@@ -1,5 +1,5 @@
-Warden::Manager.after_authentication do |record, warden, opts|
-  if record.respond_to?(:audit_login!) && !warden.request.env['devise.skip_auditable']
+Warden::Manager.after_set_user :except => :fetch do |record, warden, opts|
+  if record.respond_to?(:audit_login!) && warden.authenticated?(opts[:scope]) && !warden.request.env['devise.skip_auditable']
     record.audit_login!(warden.request)
   end
 end
